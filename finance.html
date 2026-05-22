@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<!-- saved from url=(0045)file:///C:/Users/Nic/Downloads/finance_2.html -->
+<html lang="en" style="background:#07090d;color-scheme:dark;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cashflow">
+<meta name="theme-color" content="#07090d">
+<meta name="color-scheme" content="dark">
+<title>Cashflow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="./finance_files/css2" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:     #07090d;
+  --bg1:    #0c1018;
+  --bg2:    #111620;
+  --bg3:    #161d2a;
+  --bg4:    #1c2535;
+  --line:   rgba(120,180,255,0.07);
+  --line2:  rgba(120,180,255,0.12);
+  --line3:  rgba(120,180,255,0.20);
+  --txt:    #dde8f5;
+  --txt2:   #6a829e;
+  --txt3:   #334055;
+
+  --cyan:   #00cfff;
+  --cyan-d: rgba(0,207,255,0.09);
+  --cyan-b: rgba(0,207,255,0.22);
+
+  --mag:    #ff2d9e;
+  --mag-d:  rgba(255,45,158,0.09);
+  --mag-b:  rgba(255,45,158,0.22);
+
+  --grn:    #00f0a0;
+  --grn-d:  rgba(0,240,160,0.09);
+  --grn-b:  rgba(0,240,160,0.22);
+
+  --amb:    #ffaa00;
+  --amb-d:  rgba(255,170,0,0.09);
+  --amb-b:  rgba(255,170,0,0.22);
+
+  --red:    #ff3355;
+  --red-d:  rgba(255,51,85,0.09);
+  --red-b:  rgba(255,51,85,0.22);
+
+  --pur:    #a855f7;
+  --pur-d:  rgba(168,85,247,0.09);
+  --pur-b:  rgba(168,85,247,0.22);
+
+  --r:      10px;
+  --r-sm:   7px;
+  --mono:   'IBM Plex Mono', monospace;
+  --sans:   'IBM Plex Sans', sans-serif;
+}
+html{
+  background:#07090d !important;
+  background-color:#07090d !important;
+  -webkit-tap-highlight-color:transparent;
+  color-scheme:dark;
+}
+body{
+  font-family:var(--sans);
+  background:#07090d;
+  background-color:#07090d;
+  color:var(--txt);
+  min-height:100dvh;
+  overflow-x:hidden;
+  padding-bottom:calc(68px + env(safe-area-inset-bottom,0px));
+}
+::-webkit-scrollbar{width:0;}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
+input[type=number]{-moz-appearance:textfield;appearance:textfield;}
+
+/* ── Topbar ── */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  padding:calc(env(safe-area-inset-top,0px) + 13px) 18px 13px;
+  background:rgba(7,9,13,0.90);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--line2);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo{
+  font-family:var(--mono);font-size:13px;font-weight:600;
+  letter-spacing:0.20em;text-transform:uppercase;color:var(--cyan);
+}
+.logo em{color:var(--mag);font-style:normal;}
+.sync{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.08em;
+  color:var(--grn);background:var(--grn-d);border:1px solid var(--grn-b);
+  padding:3px 10px;border-radius:3px;
+}
+
+/* ── Wrap ── */
+.wrap{padding:0 16px;max-width:580px;margin:0 auto;}
+
+/* ── Bottom nav ── */
+.nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;
+  background:rgba(7,9,13,0.94);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--line2);
+  display:flex;gap:2px;
+  padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));
+}
+.nb{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;
+  background:none;border:none;cursor:pointer;padding:7px 2px;
+  border-radius:var(--r-sm);color:var(--txt3);font-family:var(--sans);
+  transition:color .15s,background .15s;
+}
+.nb.active{color:var(--cyan);background:var(--cyan-d);}
+.nb:not(.active):hover{color:var(--txt2);background:var(--bg2);}
+.nb-icon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;}
+.nb-icon svg{width:16px;height:16px;}
+.nb-lbl{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;}
+
+/* ── Pages ── */
+.page{display:none;padding:0 0 4px;}
+.page.active{display:block;animation:rise .18s ease;}
+@keyframes rise{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Hero ── */
+.hero{padding:22px 0 2px;}
+.hero-eye{
+  font-family:var(--mono);font-size:9px;font-weight:500;
+  letter-spacing:0.16em;text-transform:uppercase;color:var(--txt3);
+  margin-bottom:10px;display:flex;align-items:center;gap:8px;
+}
+.hero-eye::before{content:'';width:20px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent);}
+.hero-num{
+  font-family:var(--mono);font-size:44px;font-weight:300;line-height:1;
+  color:var(--txt);letter-spacing:-0.02em;
+}
+.hero-cur{font-size:20px;color:var(--txt3);vertical-align:top;margin-top:5px;display:inline-block;}
+.hero-dec{font-size:22px;color:var(--txt2);}
+.hero-sub{font-family:var(--mono);font-size:10px;color:var(--txt3);margin-top:9px;line-height:1.7;}
+
+/* ── Section label ── */
+.sl{
+  font-family:var(--mono);font-size:9px;font-weight:500;
+  letter-spacing:0.14em;text-transform:uppercase;color:var(--txt3);
+  margin:22px 0 10px;display:flex;align-items:center;gap:10px;
+}
+.sl::after{content:'';flex:1;height:1px;background:var(--line2);}
+
+/* ── Alert ── */
+.alert{
+  border-radius:var(--r-sm);padding:11px 13px;
+  font-size:12px;line-height:1.6;margin-bottom:8px;
+  display:flex;gap:10px;align-items:flex-start;
+  border:1px solid;font-family:var(--sans);
+}
+.ai{flex-shrink:0;font-family:var(--mono);font-size:11px;color:inherit;margin-top:1px;}
+.a-grn{background:var(--grn-d);border-color:var(--grn-b);color:var(--grn);}
+.a-red{background:var(--red-d);border-color:var(--red-b);color:var(--red);}
+.a-amb{background:var(--amb-d);border-color:var(--amb-b);color:var(--amb);}
+.a-cyn{background:var(--cyan-d);border-color:var(--cyan-b);color:var(--cyan);}
+.a-mag{background:var(--mag-d);border-color:var(--mag-b);color:var(--mag);}
+.a-pur{background:var(--pur-d);border-color:var(--pur-b);color:var(--pur);}
+
+/* ── Metric grid ── */
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px;}
+.mc{
+  background:var(--bg1);border:1px solid var(--line2);
+  border-radius:var(--r);padding:13px 14px;
+}
+.mc.warn{border-color:var(--red-b);}
+.mc.ok{border-color:var(--grn-b);}
+.mc.full{border-color:var(--cyan-b);}
+.mc-lbl{font-family:var(--mono);font-size:8.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--txt3);margin-bottom:7px;}
+.mc-val{font-family:var(--mono);font-size:16px;font-weight:400;color:var(--txt);}
+.mc-val.warn{color:var(--red);}
+.mc-val.ok{color:var(--grn);}
+.mc-val.full{color:var(--cyan);}
+.mc-cap{font-family:var(--mono);font-size:9.5px;color:var(--txt3);margin-top:4px;}
+
+/* ── Bar card ── */
+.bar-card{background:var(--bg1);border:1px solid var(--line2);border-radius:var(--r);padding:16px 16px 10px;}
+.bari{margin-bottom:14px;}
+.bari:last-child{margin-bottom:4px;}
+.bar-hdr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+.bar-name{font-size:11px;color:var(--txt2);}
+.bar-frac{font-family:var(--mono);font-size:9.5px;color:var(--txt3);}
+.bar-track{height:2px;background:var(--bg4);border-radius:0;overflow:visible;position:relative;}
+.bar-fill{height:2px;transition:width .5s cubic-bezier(.4,0,.2,1);position:relative;}
+.bar-fill::after{
+  content:'';position:absolute;right:-1px;top:-3px;
+  width:2px;height:8px;background:inherit;
+  box-shadow:0 0 8px currentColor;
+}
+
+/* ── Inputs ── */
+.field{margin-bottom:11px;}
+.field:last-child{margin-bottom:0;}
+.field>label{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--txt3);margin-bottom:6px;font-weight:500;}
+.pw{position:relative;}
+.pp{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:13px;color:var(--txt3);pointer-events:none;}
+input[type=number],select{
+  width:100%;background:var(--bg2);border:1px solid var(--line2);
+  border-radius:var(--r-sm);color:var(--txt);
+  font-family:var(--mono);font-size:14px;font-weight:400;
+  padding:11px 12px;outline:none;
+  transition:border-color .15s,background .15s;
+}
+.has-pre input[type=number]{padding-left:25px;}
+input[type=number]:focus,select:focus{border-color:var(--cyan);background:var(--bg3);}
+select{cursor:pointer;}
+select option{background:var(--bg2);}
+.igrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+
+/* ── Step list ── */
+.steps{padding-top:2px;}
+.step{display:flex;gap:13px;padding-bottom:22px;position:relative;}
+.step:not(:last-child)::after{
+  content:'';position:absolute;left:12px;top:28px;bottom:0;
+  width:1px;background:var(--line2);
+}
+.sn{
+  width:24px;height:24px;flex-shrink:0;
+  background:var(--bg2);border:1px solid var(--line2);
+  border-radius:var(--r-sm);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:10px;color:var(--txt3);
+  position:relative;z-index:1;
+}
+.sn.ok {border-color:var(--grn-b);color:var(--grn);background:var(--grn-d);}
+.sn.act{border-color:var(--cyan-b);color:var(--cyan);background:var(--cyan-d);}
+.sb{flex:1;padding-top:3px;}
+.s-title{font-size:13px;font-weight:600;margin-bottom:4px;color:var(--txt);}
+.s-desc{font-size:11.5px;color:var(--txt2);line-height:1.65;}
+.txrow{
+  display:flex;justify-content:space-between;align-items:center;
+  background:var(--bg2);border:1px solid var(--line2);border-radius:var(--r-sm);
+  padding:9px 12px;margin-top:8px;
+  border-left:2px solid var(--cyan);
+}
+.tx-lbl{font-family:var(--mono);font-size:9.5px;color:var(--txt3);letter-spacing:0.05em;}
+.tx-amt{font-family:var(--mono);font-size:14px;font-weight:500;color:var(--cyan);}
+
+/* ── Tier blocks ── */
+.tier{
+  background:var(--bg1);border:1px solid var(--line2);
+  border-radius:var(--r);padding:14px 16px;margin-bottom:7px;
+}
+.tier-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px;}
+.tier-name{font-size:12px;font-weight:500;color:var(--txt);}
+.badge{font-family:var(--mono);font-size:8.5px;padding:2px 8px;border-radius:3px;border:1px solid;letter-spacing:0.06em;}
+.b-full{background:var(--grn-d);border-color:var(--grn-b);color:var(--grn);}
+.b-part{background:var(--amb-d);border-color:var(--amb-b);color:var(--amb);}
+.b-act {background:var(--cyan-d);border-color:var(--cyan-b);color:var(--cyan);}
+.b-none{background:var(--bg2);border-color:var(--line2);color:var(--txt3);}
+.b-pur {background:var(--pur-d);border-color:var(--pur-b);color:var(--pur);}
+.tier-meta{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;color:var(--txt3);margin-top:6px;}
+.tier-note{font-family:var(--mono);font-size:9.5px;color:var(--txt3);margin-top:5px;line-height:1.6;}
+
+/* ── Rules ── */
+.rcard{background:var(--bg1);border:1px solid var(--line2);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;}
+.rcard-title{font-family:var(--mono);font-size:8.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--txt3);margin-bottom:10px;}
+.rule{display:flex;gap:12px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line);}
+.rule:last-child{border-bottom:none;}
+.rd{width:3px;height:3px;border-radius:0;margin-top:8px;flex-shrink:0;transform:rotate(45deg);}
+.rd.r{background:var(--red);}
+.rd.g{background:var(--grn);}
+.rd.a{background:var(--amb);}
+.rd.c{background:var(--cyan);}
+.rd.p{background:var(--pur);}
+.rule-txt{font-size:12px;color:var(--txt2);line-height:1.65;}
+.rs{color:var(--txt);font-weight:500;}
+
+/* ── Collapsible rules ── */
+.collapse-toggle{
+  display:flex;align-items:center;justify-content:space-between;
+  width:100%;background:none;border:none;cursor:pointer;
+  padding:0;font-family:var(--mono);font-size:9px;font-weight:500;
+  letter-spacing:0.14em;text-transform:uppercase;color:var(--txt3);
+  margin:22px 0 10px;
+}
+.collapse-toggle::after{content:'';flex:1;height:1px;background:var(--line2);margin-left:10px;}
+.collapse-toggle .chev{
+  font-size:10px;color:var(--txt3);margin-left:8px;flex-shrink:0;
+  transition:transform .2s;
+}
+.collapse-toggle.open .chev{transform:rotate(180deg);}
+.collapse-body{display:none;margin-bottom:4px;}
+.collapse-body.open{display:block;}
+
+/* ── Check item (month end / income steps) ── */
+.chk-item{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:10px 0;border-bottom:1px solid var(--line);
+}
+.chk-item:last-child{border-bottom:none;}
+.chk-box{
+  width:16px;height:16px;flex-shrink:0;margin-top:1px;
+  border:1px solid var(--line3);border-radius:3px;background:var(--bg2);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .15s,border-color .15s;
+}
+.chk-box.checked{background:var(--grn-d);border-color:var(--grn-b);}
+.chk-box .tick{display:none;font-size:10px;color:var(--grn);}
+.chk-box.checked .tick{display:block;}
+.chk-txt{flex:1;font-size:12px;color:var(--txt2);line-height:1.65;}
+.chk-txt.done{color:var(--txt3);text-decoration:line-through;text-decoration-color:var(--txt3);}
+.chk-sub{font-family:var(--mono);font-size:10px;color:var(--cyan);margin-top:3px;}
+
+/* ── Income type selector ── */
+.itype{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:16px;}
+.it-btn{
+  background:var(--bg2);border:1px solid var(--line2);border-radius:var(--r-sm);
+  padding:10px 6px;text-align:center;cursor:pointer;
+  transition:background .15s,border-color .15s;
+}
+.it-btn.active{background:var(--cyan-d);border-color:var(--cyan-b);}
+.it-icon{font-size:16px;margin-bottom:4px;}
+.it-lbl{font-family:var(--mono);font-size:9px;letter-spacing:0.06em;text-transform:uppercase;color:var(--txt3);}
+.it-btn.active .it-lbl{color:var(--cyan);}
+
+/* ── Income result ── */
+.inc-result{margin-top:14px;}
+.inc-split{
+  background:var(--bg1);border:1px solid var(--line2);border-radius:var(--r);
+  overflow:hidden;margin-bottom:8px;
+}
+.inc-split-hdr{
+  padding:10px 14px;border-bottom:1px solid var(--line2);
+  font-family:var(--mono);font-size:9px;letter-spacing:0.10em;text-transform:uppercase;color:var(--txt3);
+}
+.inc-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:11px 14px;border-bottom:1px solid var(--line);
+  border-left:2px solid transparent;
+}
+.inc-row:last-child{border-bottom:none;}
+.inc-row.hl-cyn{border-left-color:var(--cyan);}
+.inc-row.hl-grn{border-left-color:var(--grn);}
+.inc-row.hl-pur{border-left-color:var(--pur);}
+.inc-row.hl-mag{border-left-color:var(--mag);}
+.inc-row-lbl{font-size:12px;color:var(--txt2);}
+.inc-row-val{font-family:var(--mono);font-size:14px;font-weight:500;color:var(--txt);}
+.inc-row-note{font-family:var(--mono);font-size:9.5px;color:var(--txt3);margin-top:2px;}
+
+/* ── Progress ring replacement — simple stat ── */
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px;}
+.stat{background:var(--bg1);border:1px solid var(--line2);border-radius:var(--r);padding:12px 10px;text-align:center;}
+.stat-lbl{font-family:var(--mono);font-size:8.5px;letter-spacing:0.10em;text-transform:uppercase;color:var(--txt3);margin-bottom:6px;}
+.stat-val{font-family:var(--mono);font-size:14px;font-weight:400;color:var(--txt);}
+
+/* ── Reset button ── */
+.reset-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  background:none;border:1px solid var(--line2);border-radius:var(--r-sm);
+  padding:7px 14px;font-family:var(--mono);font-size:10px;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--txt3);cursor:pointer;margin-top:16px;
+  transition:border-color .15s,color .15s;
+}
+.reset-btn:hover{border-color:var(--line3);color:var(--txt2);}
+
+@media(min-width:600px){
+  .wrap{padding:0 24px;}
+  .hero-num{font-size:54px;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">CASH<em>.</em>FLOW</div>
+  <div class="sync" id="sync-pill">● SYNCED</div>
+</div>
+
+<div class="wrap">
+
+  <!-- ─── OVERVIEW ─── -->
+  <div id="page-overview" class="page active">
+    <div class="hero">
+      <div class="hero-eye">Net position</div>
+      <div class="hero-num">
+        <span class="hero-cur">$</span><span id="h-int">0</span><span class="hero-dec" id="h-dec">.00</span>
+      </div>
+    </div>
+
+    <div id="ov-alert" class="alert a-cyn">
+      <span class="ai">//</span><span id="ov-atxt">All accounts within limits. Nothing pending.</span>
+    </div>
+
+    <div class="sl">Accounts</div>
+    <div class="mgrid" id="ov-metrics" style="grid-template-columns: 1fr 1fr 1fr;"><div class="mc">
+      <div class="mc-lbl">Spending</div>
+      <div class="mc-val">$0.00</div>
+      <div class="mc-cap">/ $1,200.00</div>
+    </div><div class="mc">
+      <div class="mc-lbl">Sinking fund</div>
+      <div class="mc-val">$0.00</div>
+      <div class="mc-cap">/ $4,100.00</div>
+    </div><div class="mc">
+      <div class="mc-lbl">Short-term savings</div>
+      <div class="mc-val">$0.00</div>
+      <div class="mc-cap">/ $5,000.00</div>
+    </div><div class="mc">
+      <div class="mc-lbl">Contingency</div>
+      <div class="mc-val">$0.00</div>
+      <div class="mc-cap">/ $17,000.00</div>
+    </div><div class="mc">
+      <div class="mc-lbl">Flex buffer</div>
+      <div class="mc-val">$0.00</div>
+      <div class="mc-cap">/ $8,000.00</div>
+    </div><div class="mc">
+      <div class="mc-lbl">Managed fund</div>
+      <div class="mc-val">$0.00</div>
+      <div class="mc-cap">managed</div>
+    </div></div>
+
+    <div class="sl">Buffer health</div>
+    <div class="bar-card" id="ov-bars"><div class="bari">
+      <div class="bar-hdr">
+        <span class="bar-name">Contingency buffer</span>
+        <span class="bar-frac">$0.00 / $17,000.00</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:0.00%;background:#00f0a0;box-shadow:0 0 6px #00f0a055;"></div>
+      </div>
+    </div><div class="bari">
+      <div class="bar-hdr">
+        <span class="bar-name">Flex buffer</span>
+        <span class="bar-frac">$0.00 / $8,000.00</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:0.00%;background:#00cfff;box-shadow:0 0 6px #00cfff55;"></div>
+      </div>
+    </div><div class="bari">
+      <div class="bar-hdr">
+        <span class="bar-name">Short-term savings</span>
+        <span class="bar-frac">$0.00 / $5,000.00</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:0.00%;background:#a855f7;box-shadow:0 0 6px #a855f755;"></div>
+      </div>
+    </div><div class="bari">
+      <div class="bar-hdr">
+        <span class="bar-name">Sinking fund</span>
+        <span class="bar-frac">$0.00 / $4,100.00</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:0.00%;background:#ffaa00;box-shadow:0 0 6px #ffaa0055;"></div>
+      </div>
+    </div><div class="bari">
+      <div class="bar-hdr">
+        <span class="bar-name">Spending</span>
+        <span class="bar-frac">$0.00 / $1,200.00</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:0.00%;background:#ff2d9e;box-shadow:0 0 6px #ff2d9e55;"></div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- ─── PAYDAY ─── -->
+  <div id="page-payday" class="page">
+    <div class="hero">
+      <div class="hero-eye">Payday calculator</div>
+    </div>
+
+    <div class="sl">Current balances</div>
+    <div class="igrid" style="margin-bottom:9px;">
+      <div class="field">
+        <label>Spending account</label>
+        <div class="pw has-pre"><span class="pp">$</span>
+        <input type="number" id="p-spending" placeholder="0.00" step="0.01" oninput="runPayday();autosave()"></div>
+      </div>
+      <div class="field">
+        <label>Sinking fund</label>
+        <div class="pw has-pre"><span class="pp">$</span>
+        <input type="number" id="p-sinking" placeholder="0.00" step="0.01" oninput="runPayday();autosave()"></div>
+      </div>
+    </div>
+    <div class="field" style="max-width:200px;">
+      <label>Pay amount (this fortnight)</label>
+      <div class="pw has-pre"><span class="pp">$</span>
+      <input type="number" id="p-pay" placeholder="0.00" step="0.01" oninput="runPayday()"></div>
+    </div>
+
+    <div class="sl">Transfer instructions</div>
+    <div class="steps" id="pd-steps">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <div class="s-title">Income arrives</div>
+        <div class="s-desc">Enter your pay amount above to calculate transfers.</div>
+        
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn ok">2</div>
+      <div class="sb">
+        <div class="s-title">Sinking fund</div>
+        <div class="s-desc">Already at cap ($4,100.00). No top-up needed.</div>
+        
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <div class="s-title">Split remainder 50 / 50</div>
+        <div class="s-desc">$0.00 remaining after sinking fund. Half to long-term savings, half stays in spending.</div>
+        
+      </div>
+    </div>
+    <div class="step">
+      <div class="sn ok">4</div>
+      <div class="sb">
+        <div class="s-title">Cap spending account</div>
+        <div class="s-desc">Spending will be $0.00 — within the $1,200.00 cap. All done.</div>
+        
+      </div>
+    </div></div>
+  </div>
+
+  <!-- ─── LTS ─── -->
+  <div id="page-lts" class="page">
+    <div class="hero">
+      <div class="hero-eye">Long-term savings</div>
+      <div class="hero-num">
+        <span class="hero-cur">$</span><span id="lts-int">0</span><span class="hero-dec" id="lts-dec">.00</span>
+      </div>
+    </div>
+
+    <div class="sl">Balance</div>
+    <div class="field" style="max-width:220px;">
+      <label>LTS total</label>
+      <div class="pw has-pre"><span class="pp">$</span>
+      <input type="number" id="l-total" placeholder="0.00" step="0.01" oninput="renderLTS();autosave()"></div>
+    </div>
+
+    <div class="sl">Tier structure</div>
+    <div id="lts-tiers">
+    <div class="tier">
+      <div class="tier-hdr">
+        <span class="tier-name">Tier 1 — Contingency buffer</span>
+        <span class="badge b-part">0%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:0.00%;background:#00f0a0;box-shadow:0 0 6px #00f0a055;"></div></div>
+      <div class="tier-meta"><span>$0.00</span><span>/ $17,000.00</span></div>
+    </div>
+    <div class="tier">
+      <div class="tier-hdr">
+        <span class="tier-name">Tier 2 — Flex buffer</span>
+        <span class="badge b-part">0%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:0.00%;background:#00cfff;box-shadow:0 0 6px #00cfff55;"></div></div>
+      <div class="tier-meta"><span>$0.00</span><span>/ $8,000.00</span></div>
+    </div>
+    <div class="tier">
+      <div class="tier-hdr">
+        <span class="tier-name">Tier 3 — Promotion pool</span>
+        <span class="badge b-none">EMPTY</span>
+      </div>
+      <div class="tier-note">Activates when LTS exceeds $25,000.00. Currently $25,000.00 away.</div>
+    </div></div>
+    <div id="lts-action" style="margin-top:2px;"><div class="alert a-amb"><span class="ai">!</span><span>Contingency buffer not yet full — $17,000.00 remaining. All LTS inflows go here first.</span></div></div>
+  </div>
+
+  <!-- ─── STS ─── -->
+  <div id="page-sts" class="page">
+    <div class="hero">
+      <div class="hero-eye">Short-term savings</div>
+      <div class="hero-num">
+        <span class="hero-cur">$</span><span id="sts-int">0</span><span class="hero-dec" id="sts-dec">.00</span>
+      </div>
+    </div>
+
+    <div class="sl">Balance</div>
+    <div class="igrid">
+      <div class="field">
+        <label>STS balance</label>
+        <div class="pw has-pre"><span class="pp">$</span>
+        <input type="number" id="s-total" placeholder="0.00" step="0.01" oninput="renderSTS();autosave()"></div>
+      </div>
+      <div class="field">
+        <label>Managed fund balance</label>
+        <div class="pw has-pre"><span class="pp">$</span>
+        <input type="number" id="s-mf" placeholder="0.00" step="0.01" oninput="renderSTS();autosave()"></div>
+      </div>
+    </div>
+
+    <div class="sl">Status</div>
+    <div id="sts-status">
+    <div class="tier">
+      <div class="tier-hdr">
+        <span class="tier-name">Short-term savings</span>
+        <span class="badge b-none">0%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:0.00%;background:#a855f7;box-shadow:0 0 6px #a855f755;"></div></div>
+      <div class="tier-meta"><span>$0.00</span><span>/ $5,000.00</span></div>
+      <div class="tier-note" style="margin-top:8px;">$5,000.00 of cap remaining.</div>
+    </div><div class="alert a-cyn"><span class="ai">//</span><span>Enter your STS balance above.</span></div></div>
+
+    <div class="sl">Account purpose</div>
+    <div class="rcard">
+      <div class="rule"><div class="rd p"></div><div class="rule-txt">Planned discretionary purchases — tech, upgrades, trips, hobbies.</div></div>
+      <div class="rule"><div class="rd p"></div><div class="rule-txt">Hard cap of $5,000.00. Any balance above this transfers to long-term savings on the first of the month.</div></div>
+      <div class="rule"><div class="rd r"></div><div class="rule-txt"><span class="rs">Never</span> used to smooth cashflow or cover bills — that's what the sinking fund is for.</div></div>
+      <div class="rule"><div class="rd r"></div><div class="rule-txt"><span class="rs">Never</span> used as a low-balance safeguard — use the flex buffer for that.</div></div>
+    </div>
+  </div>
+
+  <!-- ─── MONTH END + EXTRA INCOME ─── -->
+  <div id="page-month" class="page">
+    <div class="hero">
+      <div class="hero-eye">Month end</div>
+    </div>
+
+    <div class="sl">First of month checklist</div>
+    <div class="rcard" id="month-checklist">
+      <div class="chk-item" id="mc-sts">
+        <div class="chk-box" onclick="toggleCheck(&#39;mc-sts&#39;)"><span class="tick">✓</span></div>
+        <div class="chk-txt" id="mc-sts-txt">Check STS cap
+          <div class="chk-sub" id="mc-sts-sub" style="color: var(--grn);">STS is $0.00 — within the $5,000.00 cap. No action needed.</div>
+        </div>
+      </div>
+      <div class="chk-item" id="mc-lts">
+        <div class="chk-box" onclick="toggleCheck(&#39;mc-lts&#39;)"><span class="tick">✓</span></div>
+        <div class="chk-txt" id="mc-lts-txt">Verify LTS tier structure
+          <div class="chk-sub" id="mc-lts-sub" style="color: var(--red);">Contingency buffer $17,000.00 short. Fill this first.</div>
+        </div>
+      </div>
+      <div class="chk-item" id="mc-pool">
+        <div class="chk-box" onclick="toggleCheck(&#39;mc-pool&#39;)"><span class="tick">✓</span></div>
+        <div class="chk-txt" id="mc-pool-txt">Transfer promotion pool to managed fund
+          <div class="chk-sub" id="mc-pool-sub" style="color: var(--txt3);">No promotion pool. LTS is $25,000.00 below threshold.</div>
+        </div>
+      </div>
+      <div class="chk-item" id="mc-spend">
+        <div class="chk-box" onclick="toggleCheck(&#39;mc-spend&#39;)"><span class="tick">✓</span></div>
+        <div class="chk-txt" id="mc-spend-txt">Check spending cap
+          <div class="chk-sub" id="mc-spend-sub" style="color: var(--grn);">Spending is $0.00 — within the $1,200.00 cap.</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;">
+      <button class="reset-btn" onclick="resetChecks()">↺ Reset checklist</button>
+    </div>
+
+    <button class="collapse-toggle" onclick="toggleCollapse(&#39;r-guardrails&#39;,this)">
+      Guardrails reference <span class="chev">▼</span>
+    </button>
+    <div class="collapse-body" id="r-guardrails">
+      <div class="rcard">
+        <div class="rule"><div class="rd r"></div><div class="rule-txt">Contingency buffer ($17,000.00) — genuine income disruption only.</div></div>
+        <div class="rule"><div class="rd r"></div><div class="rule-txt">Flex buffer ($8,000.00) — urgent, non-discretionary costs only. Never lifestyle.</div></div>
+        <div class="rule"><div class="rd r"></div><div class="rule-txt">STS ($5,000.00 cap) — planned discretionary purchases only. Never cashflow smoothing.</div></div>
+        <div class="rule"><div class="rd r"></div><div class="rule-txt">Managed fund — withdrawals are planned, never reactive.</div></div>
+        <div class="rule"><div class="rd a"></div><div class="rule-txt">Low-balance safeguard — spending below $400.00: top up to $600.00 from flex buffer only.</div></div>
+        <div class="rule"><div class="rd c"></div><div class="rule-txt"><span class="rs">Spending</span> cap $1,200.00 · <span class="rs">Sinking</span> cap $4,100.00 · <span class="rs">STS</span> cap $5,000.00 · <span class="rs">LTS promo</span> above $25,000.00</div></div>
+      </div>
+    </div>
+
+    <div class="sl" style="margin-top:28px;">Extra income calculator</div>
+    <div class="itype">
+      <div class="it-btn active" id="it-invest" onclick="setIncomeType(&#39;invest&#39;)">
+        <div class="nb-icon" style="width:20px;height:20px;margin:0 auto 5px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+        </div>
+        <div class="it-lbl">Investment</div>
+      </div>
+      <div class="it-btn" id="it-windfall" onclick="setIncomeType(&#39;windfall&#39;)">
+        <div class="nb-icon" style="width:20px;height:20px;margin:0 auto 5px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"></path></svg>
+        </div>
+        <div class="it-lbl">Windfall</div>
+      </div>
+      <div class="it-btn" id="it-work" onclick="setIncomeType(&#39;work&#39;)">
+        <div class="nb-icon" style="width:20px;height:20px;margin:0 auto 5px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="20" height="14" rx="1"></rect><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path><line x1="12" y1="12" x2="12" y2="16"></line><line x1="10" y1="14" x2="14" y2="14"></line></svg>
+        </div>
+        <div class="it-lbl">Extra work</div>
+      </div>
+    </div>
+
+    <div class="field" style="max-width:220px;">
+      <label>Amount received</label>
+      <div class="pw has-pre"><span class="pp">$</span>
+      <input type="number" id="inc-amount" placeholder="0.00" step="0.01" oninput="calcIncome()"></div>
+    </div>
+
+    <div id="inc-result" class="inc-result"></div>
+
+    <button class="collapse-toggle" onclick="toggleCollapse(&#39;r-income&#39;,this)">
+      Income split rules reference <span class="chev">▼</span>
+    </button>
+    <div class="collapse-body" id="r-income">
+      <div class="rcard">
+        <div class="rule"><div class="rd c"></div><div class="rule-txt"><span class="rs">Investment income</span> (interest, dividends) — 100% to LTS.</div></div>
+        <div class="rule"><div class="rd c"></div><div class="rule-txt"><span class="rs">Windfalls</span> (gifts, refunds, sales) — 50% to STS, 50% to LTS.</div></div>
+        <div class="rule"><div class="rd c"></div><div class="rule-txt"><span class="rs">Extra work / one-off earnings</span> — 50% to spending (apply $1,200.00 cap), 50% to LTS.</div></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<nav class="nav">
+  <button class="nb active" onclick="show(&#39;overview&#39;,this)">
+    <div class="nb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg></div>
+    <span class="nb-lbl">Overview</span>
+  </button>
+  <button class="nb" onclick="show(&#39;payday&#39;,this)">
+    <div class="nb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20M2 12h20"></path><path d="M17 7H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
+    <span class="nb-lbl">Payday</span>
+  </button>
+  <button class="nb" onclick="show(&#39;lts&#39;,this)">
+    <div class="nb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg></div>
+    <span class="nb-lbl">LTS</span>
+  </button>
+  <button class="nb" onclick="show(&#39;sts&#39;,this)">
+    <div class="nb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"></path><path d="M16 12h.01"></path></svg></div>
+    <span class="nb-lbl">STS</span>
+  </button>
+  <button class="nb" onclick="show(&#39;month&#39;,this)">
+    <div class="nb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="18" rx="1"></rect><path d="M16 2v4M8 2v4M3 10h18"></path><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"></path></svg></div>
+    <span class="nb-lbl">Month end</span>
+  </button>
+</nav>
+
+<script>
+const K={
+  SPEND_CAP:1200, SINK_CAP:4100, STS_CAP:5000,
+  CONTINGENCY:17000, FLEX:8000, PROMO:25000, MORTGAGE:1100,
+};
+
+function c2(n){return Math.round(n*100)/100;}
+function fmt(n){
+  n=c2(n);
+  const neg=n<0,abs=Math.abs(n);
+  const i=Math.floor(abs),d=Math.round((abs-i)*100);
+  return(neg?'-':'')+'$'+i.toLocaleString('en-NZ')+'.'+d.toString().padStart(2,'0');
+}
+function split(n){
+  n=c2(n);
+  const neg=n<0,abs=Math.abs(n);
+  const i=Math.floor(abs),d=Math.round((abs-i)*100);
+  return{int:(neg?'-':'')+i.toLocaleString('en-NZ'),dec:'.'+d.toString().padStart(2,'0')};
+}
+
+function gs(){try{return JSON.parse(localStorage.getItem('cf4')||'{}');}catch(e){return{};}}
+function ss(s){try{localStorage.setItem('cf4',JSON.stringify(s));}catch(e){}}
+
+function autosave(){
+  const s=gs();
+  s.spending=parseFloat(document.getElementById('p-spending').value)||0;
+  s.sinking =parseFloat(document.getElementById('p-sinking').value) ||0;
+  s.lts     =parseFloat(document.getElementById('l-total').value)   ||0;
+  s.sts     =parseFloat(document.getElementById('s-total').value)   ||0;
+  s.mf      =parseFloat(document.getElementById('s-mf').value)      ||0;
+  ss(s);
+  renderOverview();
+}
+
+function loadState(){
+  const s=gs();
+  if(s.spending!=null)document.getElementById('p-spending').value=s.spending;
+  if(s.sinking !=null)document.getElementById('p-sinking').value =s.sinking;
+  if(s.lts     !=null)document.getElementById('l-total').value   =s.lts;
+  if(s.sts     !=null)document.getElementById('s-total').value   =s.sts;
+  if(s.mf      !=null)document.getElementById('s-mf').value      =s.mf;
+}
+
+function show(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(id==='overview')renderOverview();
+  if(id==='lts')renderLTS();
+  if(id==='payday')runPayday();
+  if(id==='sts')renderSTS();
+  if(id==='month'){renderMonthChecklist();loadChecks();}
+  if(id==='income')calcIncome();
+}
+
+/* ── Overview ── */
+function renderOverview(){
+  const s=gs();
+  const sp=s.spending||0, si=s.sinking||0, lt=s.lts||0, st=s.sts||0, mf=s.mf||0;
+
+  const contingency=Math.min(lt,K.CONTINGENCY);
+  const flex=lt>K.CONTINGENCY?Math.min(c2(lt-K.CONTINGENCY),K.FLEX):0;
+  const pool=lt>K.PROMO?c2(lt-K.PROMO):0;
+  const total=c2(sp+si+lt+st);
+
+  const h=split(total);
+  document.getElementById('h-int').textContent=h.int;
+  document.getElementById('h-dec').textContent=h.dec;
+
+  // 6 metric cards: spending, sinking, STS, contingency, flex, MF
+  const metrics=[
+    {lbl:'Spending',   val:sp, cap:K.SPEND_CAP, warn:sp>K.SPEND_CAP,     ok:sp<=K.SPEND_CAP&&sp>0},
+    {lbl:'Sinking fund',val:si,cap:K.SINK_CAP,  warn:false,               ok:si>=K.SINK_CAP},
+    {lbl:'Short-term savings',val:st,cap:K.STS_CAP,warn:st>K.STS_CAP,    ok:st<=K.STS_CAP&&st>0},
+    {lbl:'Contingency',val:contingency,cap:K.CONTINGENCY,warn:contingency<K.CONTINGENCY&&lt>0,ok:contingency>=K.CONTINGENCY},
+    {lbl:'Flex buffer',val:flex,cap:K.FLEX,      warn:flex<K.FLEX&&lt>K.CONTINGENCY,ok:flex>=K.FLEX},
+    {lbl:'Managed fund',val:mf,cap:null,         warn:false,               ok:mf>0},
+  ];
+  // 3-col grid for 6 cards
+  document.getElementById('ov-metrics').style.gridTemplateColumns='1fr 1fr 1fr';
+  document.getElementById('ov-metrics').innerHTML=metrics.map(m=>{
+    const cls=m.warn?' warn':m.ok?' ok':'';
+    const vcls=m.warn?' warn':m.ok?' ok':'';
+    return`<div class="mc${cls}">
+      <div class="mc-lbl">${m.lbl}</div>
+      <div class="mc-val${vcls}">${fmt(m.val)}</div>
+      ${m.cap!=null?`<div class="mc-cap">/ ${fmt(m.cap)}</div>`:'<div class="mc-cap">managed</div>'}
+    </div>`;
+  }).join('');
+
+  // Bars — 5 accounts
+  const bars=[
+    {lbl:'Contingency buffer',val:contingency,cap:K.CONTINGENCY,col:'#00f0a0'},
+    {lbl:'Flex buffer',       val:flex,       cap:K.FLEX,       col:'#00cfff'},
+    {lbl:'Short-term savings',val:st,         cap:K.STS_CAP,    col:'#a855f7'},
+    {lbl:'Sinking fund',      val:si,         cap:K.SINK_CAP,   col:'#ffaa00'},
+    {lbl:'Spending',          val:sp,         cap:K.SPEND_CAP,  col:sp>K.SPEND_CAP?'#ff3355':'#ff2d9e'},
+  ];
+  document.getElementById('ov-bars').innerHTML=bars.map(b=>{
+    const pct=b.cap>0?Math.min(100,(b.val/b.cap)*100):0;
+    return`<div class="bari">
+      <div class="bar-hdr">
+        <span class="bar-name">${b.lbl}</span>
+        <span class="bar-frac">${fmt(b.val)} / ${fmt(b.cap)}</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${pct.toFixed(2)}%;background:${b.col};box-shadow:0 0 6px ${b.col}55;"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Alert priority
+  const el=document.getElementById('ov-alert');
+  const tx=document.getElementById('ov-atxt');
+  if(sp>K.SPEND_CAP){
+    el.className='alert a-red';tx.textContent='Spending over cap — transfer '+fmt(c2(sp-K.SPEND_CAP))+' to short-term savings now.';
+  } else if(st>K.STS_CAP){
+    el.className='alert a-mag';tx.textContent='STS over cap — transfer '+fmt(c2(st-K.STS_CAP))+' to long-term savings at month end.';
+  } else if(pool>0){
+    el.className='alert a-cyn';tx.textContent='Promotion pool of '+fmt(pool)+' ready — transfer to managed fund at month end.';
+  } else if(lt>0&&lt<K.CONTINGENCY){
+    el.className='alert a-amb';tx.textContent='Contingency buffer '+fmt(c2(K.CONTINGENCY-lt))+' short. Prioritise all LTS inflows here first.';
+  } else if(lt>K.CONTINGENCY&&flex<K.FLEX){
+    el.className='alert a-amb';tx.textContent='Flex buffer '+fmt(c2(K.FLEX-flex))+' short. Fill before promotion pool activates.';
+  } else {
+    el.className='alert a-cyn';tx.textContent='All accounts within limits. Nothing pending.';
+  }
+}
+
+/* ── Payday ── */
+function runPayday(){
+  const sp =parseFloat(document.getElementById('p-spending').value)||0;
+  const si =parseFloat(document.getElementById('p-sinking').value) ||0;
+  const pay=parseFloat(document.getElementById('p-pay').value)     ||0;
+
+  const steps=[];
+
+  steps.push({n:1,state:pay>0?'act':'',
+    title:'Income arrives',
+    desc:pay>0?fmt(pay)+' deposited into spending account. Spending balance is now '+fmt(c2(sp+pay))+'.':'Enter your pay amount above to calculate transfers.',
+    tx:null});
+
+  let remaining=pay;
+  const sinkNeeded=c2(Math.max(0,K.SINK_CAP-si));
+  let toSink=0;
+
+  if(pay>0&&sinkNeeded>0){
+    const halfRem=c2(Math.max(0,(pay-K.MORTGAGE)/2));
+    toSink=c2(Math.min(sinkNeeded,K.MORTGAGE+halfRem));
+    remaining=c2(pay-toSink);
+    steps.push({n:2,state:'act',
+      title:'Top up sinking fund',
+      desc:'Sinking fund is '+fmt(si)+' — '+fmt(sinkNeeded)+' below cap. Transfer mortgage set-aside ('+fmt(K.MORTGAGE)+') plus half of remaining pay.',
+      tx:{lbl:'Spending → Sinking fund',amt:toSink}});
+  } else {
+    steps.push({n:2,state:'ok',
+      title:'Sinking fund',
+      desc:'Already at cap ('+fmt(K.SINK_CAP)+'). No top-up needed.',
+      tx:null});
+  }
+
+  const toLTS  =c2(remaining*0.5);
+  const inSpend=c2(remaining-toLTS);
+  steps.push({n:3,state:pay>0?'act':'',
+    title:'Split remainder 50 / 50',
+    desc:fmt(remaining)+' remaining after sinking fund. Half to long-term savings, half stays in spending.',
+    tx:pay>0?{lbl:'Spending → Long-term savings',amt:toLTS}:null});
+
+  const spAfter=c2(sp+inSpend);
+  const over   =c2(Math.max(0,spAfter-K.SPEND_CAP));
+  if(pay>0&&over>0){
+    steps.push({n:4,state:'act',
+      title:'Cap spending account',
+      desc:'Spending would reach '+fmt(spAfter)+' — '+fmt(over)+' above the '+fmt(K.SPEND_CAP)+' cap.',
+      tx:{lbl:'Spending → Short-term savings',amt:over}});
+  } else {
+    steps.push({n:4,state:'ok',
+      title:'Cap spending account',
+      desc:'Spending will be '+fmt(spAfter)+' — within the '+fmt(K.SPEND_CAP)+' cap. All done.',
+      tx:null});
+  }
+
+  document.getElementById('pd-steps').innerHTML=steps.map(s=>`
+    <div class="step">
+      <div class="sn${s.state==='ok'?' ok':s.state==='act'?' act':''}">${s.n}</div>
+      <div class="sb">
+        <div class="s-title">${s.title}</div>
+        <div class="s-desc">${s.desc}</div>
+        ${s.tx?`<div class="txrow"><span class="tx-lbl">${s.tx.lbl}</span><span class="tx-amt">${fmt(s.tx.amt)}</span></div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+/* ── LTS ── */
+function renderLTS(){
+  const lt=parseFloat(document.getElementById('l-total').value)||0;
+  const h=split(lt);
+  document.getElementById('lts-int').textContent=h.int;
+  document.getElementById('lts-dec').textContent=h.dec;
+
+  const contingency=Math.min(lt,K.CONTINGENCY);
+  const flex=lt>K.CONTINGENCY?Math.min(c2(lt-K.CONTINGENCY),K.FLEX):0;
+  const pool=lt>K.PROMO?c2(lt-K.PROMO):0;
+  const cp=contingency/K.CONTINGENCY*100;
+  const fp=flex/K.FLEX*100;
+
+  document.getElementById('lts-tiers').innerHTML=`
+    <div class="tier">
+      <div class="tier-hdr">
+        <span class="tier-name">Tier 1 — Contingency buffer</span>
+        <span class="badge ${contingency>=K.CONTINGENCY?'b-full':'b-part'}">${contingency>=K.CONTINGENCY?'FULL':Math.round(cp)+'%'}</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.min(100,cp).toFixed(2)}%;background:#00f0a0;box-shadow:0 0 6px #00f0a055;"></div></div>
+      <div class="tier-meta"><span>${fmt(contingency)}</span><span>/ ${fmt(K.CONTINGENCY)}</span></div>
+    </div>
+    <div class="tier">
+      <div class="tier-hdr">
+        <span class="tier-name">Tier 2 — Flex buffer</span>
+        <span class="badge ${flex>=K.FLEX?'b-full':'b-part'}">${flex>=K.FLEX?'FULL':Math.round(fp)+'%'}</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.min(100,fp).toFixed(2)}%;background:#00cfff;box-shadow:0 0 6px #00cfff55;"></div></div>
+      <div class="tier-meta"><span>${fmt(flex)}</span><span>/ ${fmt(K.FLEX)}</span></div>
+    </div>
+    <div class="tier">
+      <div class="tier-hdr">
+        <span class="tier-name">Tier 3 — Promotion pool</span>
+        <span class="badge ${pool>0?'b-act':'b-none'}">${pool>0?'ACTIVE':'EMPTY'}</span>
+      </div>
+      <div class="tier-note">${pool>0?
+        fmt(pool)+' available — transfer to managed fund at month end.':
+        'Activates when LTS exceeds '+fmt(K.PROMO)+'. Currently '+fmt(c2(Math.max(0,K.PROMO-lt)))+' away.'
+      }</div>
+    </div>`;
+
+  let act='';
+  if(pool>0)
+    act=`<div class="alert a-cyn"><span class="ai">↑</span><span>Transfer ${fmt(pool)} to managed fund at end of this month.</span></div>`;
+  else if(lt<K.CONTINGENCY)
+    act=`<div class="alert a-amb"><span class="ai">!</span><span>Contingency buffer not yet full — ${fmt(c2(K.CONTINGENCY-lt))} remaining. All LTS inflows go here first.</span></div>`;
+  else if(flex<K.FLEX)
+    act=`<div class="alert a-amb"><span class="ai">!</span><span>Flex buffer ${fmt(c2(K.FLEX-flex))} short. Fill before promotion pool activates.</span></div>`;
+  else
+    act=`<div class="alert a-grn"><span class="ai">✓</span><span>Both buffers full. ${lt>=K.PROMO?'Promotion pool active — '+fmt(pool)+' to invest.':'Promotion pool activates at '+fmt(K.PROMO)+' — '+fmt(c2(K.PROMO-lt))+' to go.'}</span></div>`;
+
+  document.getElementById('lts-action').innerHTML=act;
+  autosave();
+}
+
+/* ── STS ── */
+function renderSTS(){
+  const st=parseFloat(document.getElementById('s-total').value)||0;
+  const mf=parseFloat(document.getElementById('s-mf').value)   ||0;
+  const h=split(st);
+  document.getElementById('sts-int').textContent=h.int;
+  document.getElementById('sts-dec').textContent=h.dec;
+
+  const pct=Math.min(100,(st/K.STS_CAP)*100);
+  const over=c2(Math.max(0,st-K.STS_CAP));
+  const remaining=c2(Math.max(0,K.STS_CAP-st));
+
+  let html=`
+    <div class="tier">
+      <div class="tier-hdr">
+        <span class="tier-name">Short-term savings</span>
+        <span class="badge ${st>=K.STS_CAP?'b-full':(st>0?'b-part':'b-none')}">${st>=K.STS_CAP?'AT CAP':Math.round(pct)+'%'}</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct.toFixed(2)}%;background:#a855f7;box-shadow:0 0 6px #a855f755;"></div></div>
+      <div class="tier-meta"><span>${fmt(st)}</span><span>/ ${fmt(K.STS_CAP)}</span></div>
+      <div class="tier-note" style="margin-top:8px;">${
+        over>0?'⚠ '+fmt(over)+' over cap — transfer excess to LTS at month end.':
+        remaining>0?fmt(remaining)+' of cap remaining.':
+        'At cap. Any new inflows should be diverted to LTS.'
+      }</div>
+    </div>`;
+
+  if(mf>0){
+    html+=`
+    <div class="tier" style="margin-top:0;">
+      <div class="tier-hdr">
+        <span class="tier-name">Managed fund</span>
+        <span class="badge b-pur">INVESTED</span>
+      </div>
+      <div class="tier-note">${fmt(mf)} invested. No scheduled withdrawal date. Accepts volatility.</div>
+    </div>`;
+  }
+
+  // Alerts
+  let alerts='';
+  if(over>0){
+    alerts+=`<div class="alert a-mag"><span class="ai">!</span><span>STS is ${fmt(over)} over the $5,000.00 cap. Transfer the excess to long-term savings at end of month.</span></div>`;
+  } else if(st>=K.STS_CAP){
+    alerts+=`<div class="alert a-pur"><span class="ai">//</span><span>STS is at cap. Payday overflow will go directly to long-term savings until you spend down.</span></div>`;
+  } else if(st>0){
+    alerts+=`<div class="alert a-cyn"><span class="ai">✓</span><span>STS is within limits. ${fmt(remaining)} of cap available for planned purchases.</span></div>`;
+  } else {
+    alerts+=`<div class="alert a-cyn"><span class="ai">//</span><span>Enter your STS balance above.</span></div>`;
+  }
+
+  document.getElementById('sts-status').innerHTML=html+alerts;
+  autosave();
+}
+
+/* ── Month end checklist ── */
+function renderMonthChecklist(){
+  const s=gs();
+  const st=s.sts||0, lt=s.lts||0, sp=s.spending||0;
+  const pool=lt>K.PROMO?c2(lt-K.PROMO):0;
+  const stOver=c2(Math.max(0,st-K.STS_CAP));
+  const contingency=Math.min(lt,K.CONTINGENCY);
+  const flex=lt>K.CONTINGENCY?Math.min(c2(lt-K.CONTINGENCY),K.FLEX):0;
+
+  // STS
+  const stsSub=document.getElementById('mc-sts-sub');
+  if(stOver>0){
+    stsSub.textContent='⚠ STS is '+fmt(stOver)+' over cap — transfer excess to LTS.';
+    stsSub.style.color='var(--red)';
+  } else {
+    stsSub.textContent='STS is '+fmt(st)+' — within the '+fmt(K.STS_CAP)+' cap. No action needed.';
+    stsSub.style.color='var(--grn)';
+  }
+
+  // LTS tiers
+  const ltsSub=document.getElementById('mc-lts-sub');
+  const contOk=contingency>=K.CONTINGENCY;
+  const flexOk=flex>=K.FLEX;
+  if(!contOk){
+    ltsSub.textContent='Contingency buffer '+fmt(c2(K.CONTINGENCY-contingency))+' short. Fill this first.';
+    ltsSub.style.color='var(--red)';
+  } else if(!flexOk){
+    ltsSub.textContent='Flex buffer '+fmt(c2(K.FLEX-flex))+' short. Fill before promoting.';
+    ltsSub.style.color='var(--amb)';
+  } else {
+    ltsSub.textContent='Contingency '+fmt(contingency)+' ✓  Flex '+fmt(flex)+' ✓';
+    ltsSub.style.color='var(--grn)';
+  }
+
+  // Promotion pool
+  const poolSub=document.getElementById('mc-pool-sub');
+  if(pool>0){
+    poolSub.textContent='Transfer '+fmt(pool)+' to managed fund now.';
+    poolSub.style.color='var(--cyan)';
+  } else {
+    poolSub.textContent='No promotion pool. LTS is '+fmt(c2(Math.max(0,K.PROMO-lt)))+' below threshold.';
+    poolSub.style.color='var(--txt3)';
+  }
+
+  // Spending
+  const spSub=document.getElementById('mc-spend-sub');
+  const spOver=c2(Math.max(0,sp-K.SPEND_CAP));
+  if(spOver>0){
+    spSub.textContent='Spending is '+fmt(spOver)+' over cap — transfer to STS immediately.';
+    spSub.style.color='var(--red)';
+  } else {
+    spSub.textContent='Spending is '+fmt(sp)+' — within the '+fmt(K.SPEND_CAP)+' cap.';
+    spSub.style.color='var(--grn)';
+  }
+}
+
+function toggleCheck(id){
+  const item=document.getElementById(id);
+  const box=item.querySelector('.chk-box');
+  const txt=item.querySelector('.chk-txt');
+  const isChecked=box.classList.toggle('checked');
+  txt.classList.toggle('done',isChecked);
+  // persist
+  const s=gs(); if(!s.checks)s.checks={};
+  s.checks[id]=isChecked; ss(s);
+}
+
+function resetChecks(){
+  const s=gs(); s.checks={}; ss(s);
+  ['mc-sts','mc-lts','mc-pool','mc-spend'].forEach(id=>{
+    const item=document.getElementById(id);
+    item.querySelector('.chk-box').classList.remove('checked');
+    item.querySelector('.chk-txt').classList.remove('done');
+  });
+}
+
+function loadChecks(){
+  const s=gs(); if(!s.checks)return;
+  Object.entries(s.checks).forEach(([id,val])=>{
+    if(!val)return;
+    const item=document.getElementById(id); if(!item)return;
+    item.querySelector('.chk-box').classList.add('checked');
+    item.querySelector('.chk-txt').classList.add('done');
+  });
+}
+
+/* ── Collapsible ── */
+function toggleCollapse(id,btn){
+  const body=document.getElementById(id);
+  const open=body.classList.toggle('open');
+  btn.classList.toggle('open',open);
+}
+
+/* ── Extra income ── */
+let incomeType='invest';
+function setIncomeType(t){
+  incomeType=t;
+  ['invest','windfall','work'].forEach(x=>{
+    document.getElementById('it-'+x).classList.toggle('active',x===t);
+  });
+  calcIncome();
+}
+
+function calcIncome(){
+  const amt=parseFloat(document.getElementById('inc-amount').value)||0;
+  const el=document.getElementById('inc-result');
+  if(amt===0){el.innerHTML='';return;}
+
+  const s=gs();
+  const sp=s.spending||0;
+  let rows=[], note='';
+
+  if(incomeType==='invest'){
+    rows=[
+      {lbl:'Long-term savings',val:amt,hl:'hl-grn',note:'100% — investment income goes entirely to LTS.'},
+    ];
+    note='No spending component. Deposit directly to LTS.';
+  } else if(incomeType==='windfall'){
+    const toSTS=c2(amt*0.5);
+    const toLTS=c2(amt-toSTS);
+    rows=[
+      {lbl:'Short-term savings',val:toSTS,hl:'hl-pur',note:'50% of windfall'},
+      {lbl:'Long-term savings', val:toLTS,hl:'hl-grn',note:'50% of windfall'},
+    ];
+    note='Split evenly. STS cap still applies — check balance before depositing.';
+  } else {
+    const toSpend=c2(amt*0.5);
+    const toLTS=c2(amt-toSpend);
+    const spAfter=c2(sp+toSpend);
+    const spOver=c2(Math.max(0,spAfter-K.SPEND_CAP));
+    const spKeep=c2(toSpend-spOver);
+    rows=[
+      {lbl:'Spending account',  val:spKeep, hl:'hl-mag', note:'50% to spending — but cap applies'},
+      ...(spOver>0?[{lbl:'→ Overflow to STS',val:spOver,hl:'hl-pur',note:fmt(spOver)+' redirected (spending would exceed cap)'}]:[]),
+      {lbl:'Long-term savings', val:toLTS,  hl:'hl-grn', note:'50% of extra earnings'},
+    ];
+    note=spOver>0
+      ?'Spending cap reached — '+fmt(spOver)+' automatically redirected to STS.'
+      :'Standard extra work split. Apply $1,200.00 spending cap as usual.';
+  }
+
+  el.innerHTML=`
+    <div class="inc-split">
+      <div class="inc-split-hdr">Split for ${fmt(amt)}</div>
+      ${rows.map(r=>`
+        <div class="inc-row ${r.hl}">
+          <div>
+            <div class="inc-row-lbl">${r.lbl}</div>
+            <div class="inc-row-note">${r.note}</div>
+          </div>
+          <div class="inc-row-val">${fmt(r.val)}</div>
+        </div>`).join('')}
+    </div>
+    <div class="alert a-cyn"><span class="ai">//</span><span>${note}</span></div>`;
+}
+
+/* ── Init ── */
+loadState();
+loadChecks();
+renderOverview();
+runPayday();
+renderSTS();
+renderMonthChecklist();
+</script>
+
+
+</body></html>
